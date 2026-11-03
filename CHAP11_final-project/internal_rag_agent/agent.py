@@ -57,7 +57,16 @@ def get_supabase() -> Client:
 
 
 # 의도 분류 및 답변 생성에 사용할 Gemini 모델 (gemini-3.8-flash)
-llm = ChatGoogleGenerativeAI(model="gemini-3.8-flash", temperature=0)
+project_id = os.getenv("GOOGLE_CLOUD_PROJECT", "iceu-songpa04")
+location = os.getenv("GOOGLE_CLOUD_LOCATION", "global")
+
+llm = ChatGoogleGenerativeAI(
+    model="gemini-3.8-flash",
+    vertexai=True,
+    project=project_id,
+    location=location,
+    temperature=0,
+)
 embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
 
 
@@ -641,7 +650,12 @@ def _generate_content_response(question: str, search_results: List[Dict], source
         }
     ]
 
-    generate_llm = ChatGoogleGenerativeAI(model="gemini-3.8-flash")
+    generate_llm = ChatGoogleGenerativeAI(
+        model="gemini-3.8-flash",
+        vertexai=True,
+        project=project_id,
+        location=location,
+    )
     response = generate_llm.invoke(messages)
     answer = response.content
 

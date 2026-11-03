@@ -9,6 +9,7 @@
 # - 웹 검색 에이전트는 "모르는 문제가 나오면 스마트폰(검색 도구)으로 찾아보고 답을 적는 오픈북 시험 학생"입니다!
 # ============================================================================
 
+import os
 from typing import Annotated
 from typing_extensions import TypedDict
 
@@ -36,7 +37,16 @@ tool = TavilySearch(max_results=3)
 tools = [tool]  # AI에게 쥐여줄 도구들을 리스트(가방)에 담습니다.
 
 # 똑똑한 두뇌 역할을 할 Gemini 모델을 준비합니다.
-llm = ChatGoogleGenerativeAI(model="gemini-3.8-flash")
+project_id = os.getenv("GOOGLE_CLOUD_PROJECT", "iceu-songpa04")
+location = os.getenv("GOOGLE_CLOUD_LOCATION", "global")
+
+# 똑똑한 두뇌 역할을 할 Gemini 모델을 준비합니다 (ADC 방식 인증).
+llm = ChatGoogleGenerativeAI(
+    model="gemini-3.8-flash",
+    vertexai=True,
+    project=project_id,
+    location=location,
+)
 
 # bind_tools(tools): AI 모델에게 "너에게는 이런 검색 도구가 있으니 필요할 때 써!"라고 알려줍니다.
 # 주의: 도구를 실제로 실행하는 것이 아니라, AI에게 '도구 사용 설명서'를 쥐여주는 과정입니다.
