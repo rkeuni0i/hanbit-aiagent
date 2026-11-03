@@ -10,6 +10,7 @@
 #   자동 변속기(오토매틱) 자동차입니다!
 # ============================================================================
 
+import os
 from dotenv import load_dotenv
 
 # 단 한 줄로 도구 호출형 에이전트 그래프를 만들어주는 create_agent를 가져옵니다.
@@ -28,7 +29,16 @@ load_dotenv()
 tools = [python_exec_tool, file_write_tool]
 
 # 코딩 에이전트의 두뇌가 될 Gemini 3.8 Flash 모델을 준비합니다.
-llm = ChatGoogleGenerativeAI(model="gemini-3.8-flash")
+project_id = os.getenv("GOOGLE_CLOUD_PROJECT", "iceu-songpa04")
+location = os.getenv("GOOGLE_CLOUD_LOCATION", "global")
+
+# 코딩 에이전트의 두뇌가 될 Gemini 3.8 Flash 모델을 준비합니다 (ADC 방식 인증).
+llm = ChatGoogleGenerativeAI(
+    model="gemini-3.8-flash",
+    vertexai=True,
+    project=project_id,
+    location=location,
+)
 # llm = ChatAnthropic(model="claude-opus-4-1-20250805") # 책의 실행 결과는 본 클로드 모델을 사용하여 나온 결과입니다.
 
 # create_agent: 모델과 도구만 전달하면 내부적으로 [모델 -> 도구 실행 -> 모델] 순환 그래프를 자동 생성합니다!
@@ -45,7 +55,7 @@ if __name__ == "__main__":
     response = graph.stream(
         {
             "messages": [
-                "첫번째 항이 1인 피보나치 수열을 출력하는 파이썬 코드를 작성해주세요. 정상적으로 실행되는 지 확인도 해주세요. ",
+                "첫번째 항이 1인 피보나치 수열을 출력하는 파이썬 코드를 작성해주세요. 정상적으로 실행되는지 확인도 해주세요. ",
                 "확인했다면 그 코드는 .py 파일로 저장하세요."
             ]
         }

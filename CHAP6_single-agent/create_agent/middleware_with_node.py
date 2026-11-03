@@ -13,6 +13,7 @@
 #      "이번 손님에게는 존댓말(또는 반말)로 대답해!"라고 **귓속말(시스템 프롬프트)**만 살짝 넣어주는 방식입니다.
 # ============================================================================
 
+import os
 from dotenv import load_dotenv
 
 from langchain_google_genai import ChatGoogleGenerativeAI
@@ -26,8 +27,16 @@ from tools import tools
 load_dotenv()
 
 
-# ===== 모델 정의 =====
-model = ChatGoogleGenerativeAI(model="gemini-3.8-flash")
+project_id = os.getenv("GOOGLE_CLOUD_PROJECT", "iceu-songpa04")
+location = os.getenv("GOOGLE_CLOUD_LOCATION", "global")
+
+# ===== 모델 정의 (ADC 방식 인증) =====
+model = ChatGoogleGenerativeAI(
+    model="gemini-3.8-flash",
+    vertexai=True,
+    project=project_id,
+    location=location,
+)
 
 # 금지어 목록 (보안 검색대에서 적발할 나쁜 말 리스트)
 BLOCKED_WORDS = ["바보", "멍청이", "나쁜말"]

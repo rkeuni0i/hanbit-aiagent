@@ -1,3 +1,4 @@
+import os
 from dotenv import load_dotenv
 
 from langchain_google_genai import ChatGoogleGenerativeAI
@@ -9,9 +10,22 @@ from tools import tools
 load_dotenv()
 
 
-# ===== 모델 정의 =====
-basic_model = ChatGoogleGenerativeAI(model="gemini-3.8-flash") # [ 1 ]
-advanced_model = ChatGoogleGenerativeAI(model="gemini-3.8-flash")
+project_id = os.getenv("GOOGLE_CLOUD_PROJECT", "iceu-songpa04")
+location = os.getenv("GOOGLE_CLOUD_LOCATION", "global")
+
+# ===== 모델 정의 (ADC 방식 인증) =====
+basic_model = ChatGoogleGenerativeAI(
+    model="gemini-3.8-flash",
+    vertexai=True,
+    project=project_id,
+    location=location,
+) # [ 1 ]
+advanced_model = ChatGoogleGenerativeAI(
+    model="gemini-3.8-flash",
+    vertexai=True,
+    project=project_id,
+    location=location,
+)
 
 
 # ===== 미들웨어 정의 =====
